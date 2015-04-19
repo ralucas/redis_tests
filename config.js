@@ -3,7 +3,7 @@ var convict = require('convict');
 var config = convict({
   app: {
     doc: "The applications.",
-    format: ["website_cache"],
+    format: ["website_cache", "ims", "autocomplete"],
     default: "website_cache",
     env: "APPLICATION"
   },

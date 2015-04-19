@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        <link rel="stylesheet" href="foundation.css">
+    </head>
+    <body>
+        <!--[if lt IE 7]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+        <!-- Add your site or application content here -->
+        <p>Test</p>
+        <form>
+          <div class="small-6 columns">
+            <div class="row collapse postfix-round">
+              <div class="small-9 columns">
+                <input type="text" placeholder="Order" name="order_quantity">
+              </div>
+              <div class="small-3 columns">
+                <button type="submit" class="button postfix">Go</button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script>
+          $(function() {
+            $('form').on('submit', function(e) {
+              e.preventDefault(); 
+              var $that = $(this);
+
+              var qty = $('input').val();
+             
+              var sendData = {
+                order_quantity: qty
+              };
+              $.post('/order', sendData)
+                .done(function(data) {
+                  console.log('data: ', data);
+                  $that.append('<p>' + data + '</p>');
+              });
+            });
+          });
+        </script>
+    </body>
+</html>
