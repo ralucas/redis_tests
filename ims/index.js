@@ -4,14 +4,11 @@ var express = require('express');
 var app = express();
 
 var path = require('path');
-var url = require('url');
-var crypto = require('crypto');
-var fs = require('fs');
 
 var logger = require('morgan');
 var bodyParser = require('body-parser');
 var redis = require('redis');
-var redisPageCache = require('redis-page-cache');
+
 var config = require('../config');
 
 var redisConfig = config.get('redis');
@@ -27,14 +24,27 @@ app.use(express.static(staticPath));
 var product_key = 'catalog:item:3';
 var user_key = 'user:2000:cart:9';
 
-var options = {
-  cad: true,
-  watch: product_key,
-  retry: 3
-};
+//set up monitoring for redis
+client.monitor(function (err, res) {
+  if (err) throw new Error('Error with monitoring mode: ', err, err.stack);
+  console.log("Entering monitoring mode.");
+});
 
-//starts the cart
-client.expire(user_key, 24 * 60 * 60);
+client.on("monitor", function (time, args) {
+  console.log(time + ": " + util.inspect(args));
+});
+
+//seeds and starts the cart
+client.multi()
+  .hmset('catalog:item:1', 'title', 'Awesome Product 1', 'price', 10, 'available_quantity', 4)
+  .hmset('catalog:item:2', 'title', 'Awesome Product 2', 'price', 14, 'available_quantity', 0)
+  .hmset('catalog:item:3', 'title', 'Awesome Product 3', 'price', 12, 'available_quantity', 2)
+  .hmset('catalog:item:4', 'title', 'Awesome Product 4', 'price', 29, 'available_quantity', 16)
+  .expire(user_key, 24 * 60 * 60)
+  .exec(function(err, results) {
+    if (err) throw new Error('Error in seeding data: ', err, err.stack);
+    console.log('seed results: ', results);
+  });
 
 app.post('/order', function(req, res) {
 
