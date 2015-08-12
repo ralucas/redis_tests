@@ -20,15 +20,15 @@
         <![endif]-->
 
         <!-- Add your site or application content here -->
-        <p>Test</p>
+        <p>Suggested Search Test</p>
         <form>
           <div class="small-6 columns">
             <div class="row collapse postfix-round">
               <div class="small-9 columns">
-                <input type="text" placeholder="Order" name="order_quantity">
+                <input type="text" placeholder="Search" name="search">
               </div>
               <div class="small-3 columns">
-                <button type="submit" class="button postfix">Go</button>
+                <button type="submit" class="button postfix">Search</button>
               </div>
             </div>
           </div>
@@ -37,21 +37,23 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>
           $(function() {
-            $('form').on('submit', function(e) {
+
+            $('input[name="search"]').on('change', function(e) {
               e.preventDefault(); 
               var $that = $(this);
+              var $form = $(this).closest('form');
 
-              var qty = $('input').val();
+              var searchTerm = $(this).val();
+
+              var url = '/search?q=' + searchTerm;
              
-              var sendData = {
-                order_quantity: qty
-              };
-              $.post('/order', sendData)
-                .done(function(data) {
-                  console.log('data: ', data);
-                  $that.append('<p>' + data + '</p>');
-              });
+              $.get(url)
+                .done(function(suggestion) {
+                  console.log('data suggestion: ', suggestion);
+                  $that.text(suggestion);
+                });
             });
+
           });
         </script>
     </body>

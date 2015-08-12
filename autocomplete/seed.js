@@ -47,22 +47,10 @@ module.exports = function(client) {
       client.multi(builtArr)
        .exec(function(err, results) {
          if (err) throw new Error('Error in seeding: ', err, err.stack);
-         console.log('results: ', results);
+         console.log('Seeding results: ', results);
       });
+    }).fail(function(err) {
+      console.error(err);
     });
 };
 
-/* .zadd('a', 9, 'apple_iphone_5s')*/
-  //.zadd('ap', 9, 'apple_iphone_5s')
-  //.zadd('app', 9, 'apple_iphone_5s')
-  //.zadd('apple', 9, 'apple_iphone_5s')
-  //.zadd('i', 9, 'apple_iphone_5s')
-  //.zadd('ip', 9, 'apple_iphone_5s')
-  //.zadd('iph', 9, 'apple_iphone_5s')
-  //.zadd('ipho', 9, 'apple_iphone_5s')
-  //.zadd('iphon', 9, 'apple_iphone_5s')
-  //.zadd('iphone', 9, 'apple_iphone_5s')
-  //.zadd('5', 9, 'apple_iphone_5s')
-  //.zadd('5s', 9, 'apple_iphone_5s')
-  //.hset('titles', 'apple_iphone_5s', 'Apple iPhone 5S')
-  
