@@ -37,7 +37,12 @@ function getPredictedSearch(term) {
   return Q.ninvoke(client,'zrange', term, 0, 4)
     .then(function(results) {
       console.log('zrange res: ', results);
-      return Q.ninvoke(client, 'hmget', 'titles', results[0]);
+      var promises = [];
+      results.forEach(function(result) {
+        var promise = Q.ninvoke(client, 'hmget', 'titles', result);
+        promises.push(promise);
+      });
+      return Q.all(promises);
     })
     .then(function(results) {
       console.log('hget res: ', results);

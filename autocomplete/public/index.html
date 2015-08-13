@@ -6,36 +6,42 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title></title>
+        <title>Autocomplete Test</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
-
         <link rel="stylesheet" href="foundation.css">
+        <style>
+          input, button {
+            height: 75px !important;
+            font-size: 36px !important;
+          }
+
+          h1 {
+            text-align: center;
+          }
+        </style>
     </head>
     <body>
-        <!--[if lt IE 7]>
-            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]-->
-
-        <!-- Add your site or application content here -->
-        <p>Suggested Search Test</p>
+        <div class="row">
+          <h1 class="columns large-9 large-centered">Autocomplete Input Test</h1>
+        </div>
         <form>
-          <div class="small-6 columns">
+          <div>
             <div class="row collapse postfix-round">
-              <div class="small-9 columns">
+              <div class="large-9 columns">
                 <input type="text" placeholder="Search" list="words" name="search" autocomplete="on">
                 <datalist id="words"></datalist>
               </div>
-              <div class="small-3 columns">
+              <div class="large-3 columns">
                 <button type="submit" class="button postfix">Search</button>
               </div>
             </div>
           </div>
         </form>
 
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="jquery.min.js"></script>
+        
         <script>
           $(function() {
 
@@ -44,7 +50,7 @@
             $('input[name="search"]').on('keyup', function(e) {
               e.preventDefault(); 
               var searchTerm = $(this).val();
-              var url = '/search?q=' + searchTerm;
+              var url = '/search?q=' + searchTerm.toLowerCase();
              
               $.get(url)
                 .then(function(suggestions) {
