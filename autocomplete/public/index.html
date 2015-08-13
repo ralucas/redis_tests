@@ -25,7 +25,8 @@
           <div class="small-6 columns">
             <div class="row collapse postfix-round">
               <div class="small-9 columns">
-                <input type="text" placeholder="Search" name="search">
+                <input type="text" placeholder="Search" list="words" name="search" autocomplete="on">
+                <datalist id="words"></datalist>
               </div>
               <div class="small-3 columns">
                 <button type="submit" class="button postfix">Search</button>
@@ -38,19 +39,23 @@
         <script>
           $(function() {
 
-            $('input[name="search"]').on('change', function(e) {
+            var $datalist = $(document).find('datalist');
+
+            $('input[name="search"]').on('keyup', function(e) {
               e.preventDefault(); 
-              var $that = $(this);
-              var $form = $(this).closest('form');
-
               var searchTerm = $(this).val();
-
               var url = '/search?q=' + searchTerm;
              
               $.get(url)
-                .done(function(suggestion) {
-                  console.log('data suggestion: ', suggestion);
-                  $that.text(suggestion);
+                .then(function(suggestions) {
+                  console.log('data suggestion: ', suggestions);
+                  var options = '';
+                  suggestions.forEach(function(suggestion) {
+                    var option = '<option value="' + suggestion + '"></option>';
+                    console.log('option: ', option);
+                    options += option;
+                  });
+                  $datalist.html(options);
                 });
             });
 
