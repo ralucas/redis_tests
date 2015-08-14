@@ -56,7 +56,7 @@ app.get('/search', function(req, res) {
   getPredictedSearch(searchTerm)
     .then(function(results) {
       console.log('prediction: ', results);
-      if (results) {
+      if (results[0]) {
         res.send(results);
       }
     });

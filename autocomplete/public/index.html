@@ -50,7 +50,7 @@
             $('input[name="search"]').on('keyup', function(e) {
               e.preventDefault(); 
               var searchTerm = $(this).val();
-              var url = '/search?q=' + searchTerm.toLowerCase();
+              var url = '/search?q=' + searchTerm.replace(/\s/g, '_').toLowerCase();
              
               $.get(url)
                 .then(function(suggestions) {

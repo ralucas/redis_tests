@@ -22,18 +22,32 @@ module.exports = function(client) {
     var multiAdd = [];
     var deferred = Q.defer();
 
-    terms.forEach(function(term) {
+    terms.forEach(function(term, termIdx) {
       var words = term.name.toLowerCase().split(' '); 
       var key = words.join('_');
-      
-      words.forEach(function(word) {
+      var builtDest = words[0];
+      var cachedIdx = 0;
+
+      words.forEach(function(word, wordIdx) {
         var len = word.length,
             builtWord = '',
             i = 0;
 
+        if (wordIdx > cachedIdx) {
+          builtDest += '_';
+          cachedIdx++;
+        }
+
         for (i; i < len; i += 1) {
           builtWord += word[i];
           multiAdd.push(['zadd', builtWord, term.popularity, key]);
+          if (wordIdx > 0) {
+            builtDest += word[i]; 
+            var zinterBeg = ['zinterstore', builtDest, wordIdx + 1];
+            var termsArr = builtDest.split('_'); 
+            var zinterCmd = zinterBeg.concat(termsArr).concat(['aggregate', 'max']); 
+            multiAdd.push(zinterCmd);
+          }
         }
       });
       multiAdd.push(['hset', 'titles', key, term.name]);
