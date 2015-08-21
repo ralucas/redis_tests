@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Autocomplete Test</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="stylesheet" href="foundation.css">
+        <style>
+          input, button {
+            height: 75px !important;
+            font-size: 36px !important;
+          }
+
+          h1 {
+            text-align: center;
+          }
+        </style>
+    </head>
+    <body>
+        <div class="row">
+          <h1 class="columns large-9 large-centered">Autocomplete Input Test</h1>
+        </div>
+        <form>
+          <div>
+            <div class="row collapse postfix-round">
+              <div class="large-9 columns">
+                <input type="text" placeholder="Search" list="words" name="search" autocomplete="on">
+                <datalist id="words"></datalist>
+              </div>
+              <div class="large-3 columns">
+                <button type="submit" class="button postfix">Search</button>
+              </div>
+            </div>
+          </div>
+        </form>
+
+        <script src="jquery.min.js"></script>
+        
+        <script>
+          $(function() {
+
+            var $datalist = $(document).find('datalist');
+
+            $('input[name="search"]').on('keyup', function(e) {
+              e.preventDefault(); 
+              var searchTerm = $(this).val();
+              var url = '/search?q=' + searchTerm.replace(/\s/g, '_').toLowerCase();
+             
+              $.get(url)
+                .then(function(suggestions) {
+                  console.log('data suggestion: ', suggestions);
+                  var options = '';
+                  suggestions.forEach(function(suggestion) {
+                    var option = '<option value="' + suggestion + '"></option>';
+                    console.log('option: ', option);
+                    options += option;
+                  });
+                  $datalist.html(options);
+                });
+            });
+
+          });
+        </script>
+    </body>
+</html>
