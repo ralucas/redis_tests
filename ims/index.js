@@ -14,6 +14,8 @@ var config = require('../config');
 var redisConfig = config.get('redis');
 
 var client = redis.createClient(redisConfig.port, redisConfig.server, redisConfig.options);
+// we have to create a separate client for monitoring
+var monitorClient = redis.createClient();
 
 var staticPath = path.join(__dirname, 'public/');
 
@@ -25,12 +27,12 @@ var product_key = 'catalog:item:3';
 var user_key = 'user:2000:cart:9';
 
 //set up monitoring for redis
-client.monitor(function (err, res) {
+monitorClient.monitor(function (err, res) {
   if (err) throw new Error('Error with monitoring mode: ', err, err.stack);
   console.log("Entering monitoring mode.");
 });
 
-client.on("monitor", function (time, args) {
+monitorClient.on("monitor", function (time, args) {
   console.log(time + ": " + util.inspect(args));
 });
 
