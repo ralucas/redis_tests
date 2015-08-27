@@ -14,6 +14,7 @@ var redisConfig = config.get('redis');
 var seed = require('./seed');
 
 var client = redis.createClient(redisConfig.port, redisConfig.server, redisConfig.options);
+var monitorClient = redis.createClient();
 
 seed(client);
 
@@ -24,14 +25,14 @@ app.use(bodyParser());
 app.use(express.static(staticPath));
 
 //set up monitoring for redis
-//client.monitor(function (err, res) {
-  //if (err) throw new Error('Error with monitoring mode: ', err, err.stack);
-  //console.log("Entering monitoring mode.");
-//});
+monitorClient.monitor(function (err, res) {
+  if (err) throw new Error('Error with monitoring mode: ', err, err.stack);
+  console.log("Entering monitoring mode.");
+});
 
-//client.on("monitor", function (time, args) {
-  //console.log(time + ": " + args);
-//});
+monitorClient.on("monitor", function (time, args) {
+  console.log(time + ": " + args);
+});
 
 function getPredictedSearch(term) {
   return Q.ninvoke(client,'zrange', term, 0, 4)

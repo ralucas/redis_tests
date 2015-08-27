@@ -1,56 +1,49 @@
 var Q = require('q');
+var _ = require('lodash');
 
 var searchTerms = [{
     name: "Apple iPhone 5S",
-    popularity: 9
+    os: "iOs",
+    manufacturer: "Apple",
+    sim: "Single"
   }, {
     name: "Apple iPhone 5C",
-    popularity: 6
+    os: "iOs",
+    manufacturer: "Apple",
+    sim: "Single"
   }, {
     name: "Samsung Galaxy Note 3",
-    popularity: 8
+    os: "Android",
+    manufacturer: "Samsung",
+    sim: "Single"
   }, {
     name: "Samsung Galaxy Nexus",
-    popularity: 7
+    os: "Android",
+    manufacturer: "Samsung",
+    sim: "Single"
+  }, {
+    name: "Samsung Wave 3",
+    os: "Bada",
+    manufacturer: "Samsung",
+    sim: "Single"
   }];
 
 module.exports = function(client) {
 
   client.flushdb();
 
-  var createArray = function(terms) {
+  var createStatements = function(terms) {
     var multiAdd = [];
     var deferred = Q.defer();
 
-    terms.forEach(function(term, termIdx) {
-      var words = term.name.toLowerCase().split(' '); 
-      var key = words.join('_');
-      var builtDest = words[0];
-      var cachedIdx = 0;
-
-      words.forEach(function(word, wordIdx) {
-        var len = word.length,
-            builtWord = '',
-            i = 0;
-
-        if (wordIdx > cachedIdx) {
-          builtDest += '_';
-          cachedIdx++;
-        }
-
-        for (i; i < len; i += 1) {
-          builtWord += word[i];
-          multiAdd.push(['zadd', builtWord, term.popularity, key]);
-          if (wordIdx > 0) {
-            builtDest += word[i]; 
-            var zinterBeg = ['zinterstore', builtDest, wordIdx + 1];
-            var termsArr = builtDest.split('_'); 
-            var zinterCmd = zinterBeg.concat(termsArr).concat(['aggregate', 'max']); 
-            multiAdd.push(zinterCmd);
-          }
+    terms.forEach(function(term, idx) {
+      var phone = 'phone:' + (idx + 1);
+      multiAdd.push(['hmset', phone, 'title', term.name]);
+      _.each(term, function(val, key) {
+        if (key !== 'name') {
+          multiAdd.push(['sadd', key.toUpperCase() + ':' + val, phone]);
         }
       });
-      multiAdd.push(['hset', 'titles', key, term.name]);
       deferred.resolve(multiAdd);
     });
     return deferred.promise;
